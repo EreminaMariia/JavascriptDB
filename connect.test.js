@@ -37,6 +37,119 @@ var galaxyResult = [
     { Name: 'iPhone 6', Description: 'Apple' }
   ];
 
+  var testData =   [
+    {Name:'iPhone 6', Description: 'Apple' }, 
+    {Name:'Galaxy S8', Description: 'Samsung'}, 
+  {Name:'Galaxy S8 Plus', Description:'Samsung'},
+  {Name: 'iPhone 6', Description: 'Apple' }, 
+  {Name: 'Galaxy S8', Description: 'Samsung' }, 
+  {Name: 'Galaxy S8 Plus', Description: 'Samsung' }, 
+  {Name: 'iPhone 5', Description: 'Apple' }, 
+  {Name: 'Galaxy S7', Description: 'Samsung' }, 
+  {Name: 'Galaxy S7 Plus', Description: 'Samsung' }, 
+  {Name: 'iPhone 3', Description: 'Apple' }, 
+  {Name: 'iPhone 3', Description: 'Apple' }, 
+  {Name: 'iPhone 3', Description: 'Apple' }, 
+  {Name: 'iPhone 3', Description: 'Apple' }, 
+  {Name: 'iPhone 3', Description: 'Apple' }, 
+  {Name: 'iPhone 2', Description: 'Apple' }, 
+  {Name: 'iPhone 2', Description: 'Apple' }, 
+  {Name: 'iPhone 2', Description: 'Apple' }, 
+  {Name: 'iPhone 2', Description: 'Apple' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi6', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Mi5', Description: 'Xiaomi' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5', Description: 'Samsung' }, 
+  {Name: 'Galaxy S5 Plus', Description: 'Samsung' }, 
+  {Name: 'Galaxy', Description: 'Samsung' }, 
+  {Name: 'Galaxy', Description: 'Samsung' }, 
+  {Name: 'A-gal', Description: 'Galaxy' }, 
+  {Name: 'A-gal', Description: 'Galaxy' }, 
+  {Name: 'A-galaxy', Description: 'Galaxy' }, 
+  {Name: 'A-galaxy', Description: 'Samsung' }, 
+  {Name: 'Galaxyon', Description: 'Samsung' }, 
+  {Name: 'A-galaxy', Description: 'Samsung' }, 
+  {Name: 'A Galaxy', Description: 'Samsung' },  
+];
+
+const sql = require('mssql'); 
+
+  dbConfig = { 
+
+  user: 'user', 
+
+  password: 'passwordpassword', 
+
+  server: 'localhost', 
+
+  database: "TestDB", 
+
+  trustServerCertificate: true, 
+
+  options: { 
+
+      trustedConnection: true 
+
+    } 
+
+} 
+
+describe('tests', function () { 
+
+    before(async function () { 
+
+        var r = MakeString(testData);
+        var c = `DELETE FROM TestTable; INSERT INTO TestTable(Name, Description) VALUES` + r;
+        console.log(c);
+        await sql.connect(dbConfig).then(pool => { 
+
+            return pool.request().query(c);
+
+        }) 
+    }); 
+    after(async function () { 
+        await sql.connect(dbConfig).then(pool => { 
+
+            return pool.request().query(`DELETE FROM TestTable`);
+
+        }) 
+    });   
+
 it("should be no result", async function(){
      
     var expectedResult = 0;
@@ -59,8 +172,8 @@ it("should be no result(data)", async function(){
      
     var expectedResult = [];
     var result = await operations.GetByName("TestDB", "XP-Pen");
-    if(CompareObj(result, expectedResult)){
-        throw new Error(`Expected empty object`);
+    if(!CompareObj(result.data, expectedResult)){
+        throw new Error(`Expected ${MakeString(expectedResult)}, but got ${MakeString(result.data)}`);
     }
 });
 
@@ -86,8 +199,8 @@ it("should be less than 20 lines(data)", async function(){
      
     var expectedResult = appleResult;
     var result = await operations.GetByName("TestDB", "Apple");
-    if(CompareObj(result, expectedResult)){
-        throw new Error(`Expected correct lines`);
+    if(!CompareObj(result.data, expectedResult)){
+        throw new Error(`Expected ${MakeString(expectedResult)}, but got ${MakeString(result.data)}`);
     }
 });
  
@@ -113,14 +226,17 @@ it("should get more than shown lines(data)", async function(){
      
     var expectedResult = galaxyResult;
     var result = await operations.GetByName("TestDB", "Galaxy");
-    if(CompareObj(result, expectedResult)){
-        throw new Error(`Expected correct lines`);
+    if(!CompareObj(result.data, expectedResult)){
+        throw new Error(`Expected ${MakeString(expectedResult)}, but got ${MakeString(result.data)}`);
     }
+})
 });
 
 
-function CompareObj (expected, real)
+function CompareObj (real, expected)
 {
+    if (real.length === undefined) return false;
+    
     if (real.length !== expected.length) return false;
 
     if (real.length == 0 && expected.length == 0) return true;
@@ -132,4 +248,19 @@ function CompareObj (expected, real)
         }
       }
       return true;
+}
+
+function MakeString (testData)
+{
+    var result = "";
+    var a = ",";
+    for (let i = 0; i < testData.length; i++)
+    { 
+    if (i == testData.length-1)
+    {
+        a = " ";
+    }
+    result+=('('+ "'" + testData[i].Name + "'" +',' + "'" +testData[i].Description + "'" +')'+a);
+    }
+    return result;
 }
