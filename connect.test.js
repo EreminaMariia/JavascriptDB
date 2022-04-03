@@ -37,6 +37,14 @@ var galaxyResult = [
     { Name: 'iPhone 6', Description: 'Apple' }
   ];
 
+var lineResult = [
+    { Name: 'A-gal', Description: 'Galaxy' },
+    { Name: 'A-gal', Description: 'Galaxy' },
+    { Name: 'A-galaxy', Description: 'Galaxy' },
+    { Name: 'A-galaxy', Description: 'Samsung' },
+    { Name: 'A-galaxy', Description: 'Samsung' }
+  ];
+
   var testData =   [
     {Name:'iPhone 6', Description: 'Apple' }, 
     {Name:'Galaxy S8', Description: 'Samsung'}, 
@@ -135,7 +143,6 @@ describe('tests', function () {
 
         var r = MakeString(testData);
         var c = `DELETE FROM TestTable; INSERT INTO TestTable(Name, Description) VALUES` + r;
-        console.log(c);
         await sql.connect(dbConfig).then(pool => { 
 
             return pool.request().query(c);
@@ -149,6 +156,15 @@ describe('tests', function () {
 
         }) 
     });   
+
+it("should be no connection", async function(){
+     
+        var expectedResult = 0;
+        var result = await operations.GetByName("WrongDB", "XP-Pen");
+        if(result.count!==expectedResult && result.data !== []){
+            throw new Error(`Expected ${expectedResult}, but got ${result.count}`);
+        }
+    });
 
 it("should be no result", async function(){
      
@@ -229,7 +245,34 @@ it("should get more than shown lines(data)", async function(){
     if(!CompareObj(result.data, expectedResult)){
         throw new Error(`Expected ${MakeString(expectedResult)}, but got ${MakeString(result.data)}`);
     }
-})
+});
+
+it("should get part of the word", async function(){
+     
+    var expectedResult = 5;
+    var result = await operations.GetByName("TestDB", "-");
+    if(result.count!==expectedResult){
+        throw new Error(`Expected ${expectedResult}, but got ${result.count}`);
+    }
+});
+
+it("should get part of the word(show)", async function(){
+     
+    var expectedResult = 5;
+    var result = await operations.GetByName("TestDB", "-");
+    if(result.data.length!==expectedResult){
+        throw new Error(`Expected ${expectedResult}, but got ${result.data.length}`);
+    }
+});
+
+it("should get part of the word(data)", async function(){
+     
+    var expectedResult = lineResult;
+    var result = await operations.GetByName("TestDB", "-");
+    if(!CompareObj(result.data, expectedResult)){
+        throw new Error(`Expected ${MakeString(expectedResult)}, but got ${MakeString(result.data)}`);
+    }
+});
 });
 
 

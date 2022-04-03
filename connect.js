@@ -19,7 +19,7 @@ const sql = require('mssql');
         return pool.request().query(`SELECT TOP 20 Name, Description FROM TestTable 
         WHERE Name LIKE '%` + sequense + `%'
         OR Description LIKE '%` + sequense + `%'
-        ORDER BY Name;`)
+        ORDER BY Name, Description;`)
 
     }).then(result => {
         res.data = result.recordset.slice();
@@ -27,8 +27,7 @@ const sql = require('mssql');
         }).catch(err => {
 
             console.log(err);
-
-
+            res.data = err;
     });
 
     await sql.connect(dbConfig).then(pool => {
