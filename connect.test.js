@@ -1,4 +1,4 @@
-const operations = require("./connect");
+const operations = require("./DbOperations");
 const sql = require('mssql'); 
 const DBName = "TestDB";
 const tableName = "TestTable";
@@ -46,12 +46,11 @@ describe('tests', function () {
 it("should be no table", async function(){
      
         var result;
-        var result = await operations.GetByName("WrongName", "XP-Pen").catch(err => {
-
-            result = err;
+        var result = await operations.GetByName("WrongName", "XP-Pen").catch(error => {
+            result = error;
         });;
-        if(result === undefined){            
-            throw new Error(`Expected exseption, but got ${result}`);
+        if(result != undefined){            
+            throw new Error(`Expected no result, but got ${result}`);
         }
     });
 
