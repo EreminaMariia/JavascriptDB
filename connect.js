@@ -1,4 +1,4 @@
-module.exports.GetByName = async function (dbName, sequense)
+module.exports.GetByName = async function (tableName, sequense)
 {
 let res = {};
 const sql = require('mssql');
@@ -7,7 +7,7 @@ const sql = require('mssql');
         user: 'user',
         password: 'passwordpassword',
         server: 'localhost',
-        database: dbName,
+        database: "TestDB",
         trustServerCertificate: true,
         options: {
             trustedConnection: true
@@ -16,8 +16,8 @@ const sql = require('mssql');
 
     await sql.connect(dbConfig).then(pool => {
 
-        return pool.request().query(`SELECT TOP 20 Name, Description FROM TestTable 
-        WHERE Name LIKE '%` + sequense + `%'
+        return pool.request().query(`SELECT TOP 20 Name, Description FROM `+ tableName + 
+        ` WHERE Name LIKE '%` + sequense + `%'
         OR Description LIKE '%` + sequense + `%'
         ORDER BY Name, Description;`)
 
@@ -32,8 +32,8 @@ const sql = require('mssql');
 
     await sql.connect(dbConfig).then(pool => {
 
-        return pool.request().query(`SELECT COUNT (*) FROM TestTable 
-        WHERE Name LIKE '%` + sequense + `%'
+        return pool.request().query(`SELECT COUNT (*) FROM `+ tableName + 
+        ` WHERE Name LIKE '%` + sequense + `%'
         OR Description LIKE '%` + sequense + `%'`)
 
     }).then(result => {
